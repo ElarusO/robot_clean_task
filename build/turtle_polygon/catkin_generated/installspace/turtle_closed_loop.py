@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# ROS1 Noetic 海龟闭环导航节点
+import rospy
+import math
+from geometry_msgs.msg import Twist
+from turtlesim.msg import Pose
+
+class TurtleClosedLoop:
+    def __init__(self):
+        # 初始化节点
+        rospy.init_node('turtle_closed_loop_node', anonymous=True)
+        # 创建发布者（控制海龟运动）
+        self.cmd_vel_pub = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
+        # 创建订阅者（订阅里程计数据）
+        self.pose_sub = rospy.Subscriber('/turtle1/pose', Pose, self.pose_callback)
+        # 初始化当前位姿
+        self.current_pose = Pose()
+        # 初始化控制指令
+        self.twist = Twist()
+        # 比例控制参数（可调试）
+        self.Kp_linear = 0.5    # 线速度比例系数
+        self.Kp_angular = 2.0   # 角速度比例系数
+        # 目标点列表（按题目要求）
+        self.targets = [(2,2), (2,8), (8,8), (8,2), (2,2)]
+        self.current_target_idx = 0
+        # 到达阈值（距离<0.05m时判定为到达）
+        self.arrive_threshold = 0.05
+        # 循环频率
+        self.rate = rospy.Rate(10)
+
+    # 里程计数据回调函数
+    def pose_callback(self, msg):
+        self.current_pose = msg
+
+    # 计算目标点与当前点的距离和角度误差
+    def calculate_error(self, target_x, target_y):
+        # 距离误差
+        dx = target_x - self.current_pose.x
+        dy = target_y - self.current_pose.y
+        distance = math.hypot(dx, dy)
+        # 角度误差（归一化到[-π, π]）
+        target_angle = math.atan2(dy, dx)
+        angle_error = target_angle - self.current_pose.theta
+        angle_error = math.atan2(math.sin(angle_error), math.cos(angle_error))
+        return distance, angle_error
+
+    # 比例控制函数
+    def p_control(self, distance, angle_error):
+        # 线速度：与距离成正比，到达时降为0
+        self.twist.linear.x = self.Kp_linear * distance if distance > self.arrive_threshold else 0.0
+        # 角速度：与角度误差成正比
+        self.twist.angular.z = self.Kp_angular * angle_error
+        # 发布控制指令
+        self.cmd_vel_pub.publish(self.twist)
+
+    # 多点巡航主逻辑
+    def multi_point_navigation(self):
+        rospy.loginfo("开始多点巡航任务...")
+        # 循环3圈
+        for _ in range(3):
+            self.current_target_idx = 0
+            while self.current_target_idx < len(self.targets) and not rospy.is_shutdown():
+                target_x, target_y = self.targets[self.current_target_idx]
+                rospy.loginfo("当前目标点: (%.2f, %.2f)", target_x, target_y)
+
+                # 持续控制直到到达目标点
+                while not rospy.is_shutdown():
+                    distance, angle_error = self.calculate_error(target_x, target_y)
+                    # 角度误差控制在±0.02rad内
+                    if abs(angle_error) > 0.02:
+                        self.p_control(0, angle_error)
+                    else:
+                        self.p_control(distance, angle_error)
+
+                    # 检查是否到达目标点
+                    if distance < self.arrive_threshold:
+                        rospy.loginfo("到达目标点: (%.2f, %.2f)", target_x, target_y)
+                        self.current_target_idx += 1
+                        break
+                    self.rate.sleep()
+
+        rospy.loginfo("3圈巡航任务完成！")
+        # 停止海龟
+        self.twist.linear.x = 0.0
+        self.twist.angular.z = 0.0
+        self.cmd_vel_pub.publish(self.twist)
+
+if __name__ == '__main__':
+    try:
+        turtle = TurtleClosedLoop()
+        # 等待里程计数据初始化
+        rospy.sleep(0.5)
+        turtle.multi_point_navigation()
+    except rospy.ROSInterruptException:
+        pass

@@ -1,0 +1,7 @@
+<launch>
+    <!-- 启动 gripper 服务端节点 -->
+    <node name="gripper_server" pkg="restaurant_clean_task" type="gripper_server_node.py" output="screen"/>
+
+    <!-- 启动主任务节点 -->
+    <node name="task_sequence" pkg="restaurant_clean_task" type="task_sequence.py" output="screen"/>
+</launch>

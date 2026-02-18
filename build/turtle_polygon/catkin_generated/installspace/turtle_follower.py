@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import rospy
+import math
+from geometry_msgs.msg import Twist
+from turtlesim.msg import Pose
+from turtlesim.srv import Spawn
+
+class TurtleFollower:
+    def __init__(self):
+        rospy.init_node('turtle_follower_node', anonymous=True)
+        
+        # 生成跟随者海龟
+        rospy.wait_for_service('/spawn')
+        try:
+            spawn_turtle = rospy.ServiceProxy('/spawn', Spawn)
+            spawn_turtle(5.0, 5.0, 0.0, "turtle2")
+            rospy.loginfo("生成跟随者海龟 turtle2 成功")
+        except rospy.ServiceException as e:
+            rospy.logerr("生成海龟失败: %s" % e)
+
+        # 订阅与发布
+        self.leader_pose_sub = rospy.Subscriber('/turtle1/pose', Pose, self.leader_pose_callback)
+        self.follower_pose_sub = rospy.Subscriber('/turtle2/pose', Pose, self.follower_pose_callback)
+        self.cmd_vel_pub = rospy.Publisher('/turtle2/cmd_vel', Twist, queue_size=10)
+
+        # 初始化状态
+        self.leader_pose = Pose()
+        self.follower_pose = Pose()
+        self.twist = Twist()
+
+        # 跟随参数
+        self.follow_distance = 2.0
+        self.Kp_linear = 0.5
+        self.Kp_angular = 2.0
+        self.arrive_threshold = 0.05
+        self.rate = rospy.Rate(10)
+
+    def leader_pose_callback(self, msg):
+        self.leader_pose = msg
+
+    def follower_pose_callback(self, msg):
+        self.follower_pose = msg
+
+    def predict_leader_pose(self, dt=0.2):
+        """预测领航者未来dt时间后的位姿"""
+        x = self.leader_pose.x
+        y = self.leader_pose.y
+        theta = self.leader_pose.theta
+        v_linear = self.leader_pose.linear_velocity
+        v_angular = self.leader_pose.angular_velocity
+
+        x_pred = x + v_linear * math.cos(theta) * dt
+        y_pred = y + v_linear * math.sin(theta) * dt
+        theta_pred = theta + v_angular * dt
+        theta_pred = math.atan2(math.sin(theta_pred), math.cos(theta_pred))
+
+        return x_pred, y_pred, theta_pred
+
+    def calculate_follow_target(self):
+        """基于预测位姿计算跟随目标点"""
+        x_pred, y_pred, theta_pred = self.predict_leader_pose(dt=0.2)
+        target_x = x_pred - self.follow_distance * math.cos(theta_pred)
+        target_y = y_pred - self.follow_distance * math.sin(theta_pred)
+        return target_x, target_y
+
+    def p_control(self, target_x, target_y):
+        """比例控制生成指令"""
+        dx = target_x - self.follower_pose.x
+        dy = target_y - self.follower_pose.y
+        distance = math.hypot(dx, dy)
+        target_angle = math.atan2(dy, dx)
+        angle_error = target_angle - self.follower_pose.theta
+        angle_error = math.atan2(math.sin(angle_error), math.cos(angle_error))
+
+        self.twist.linear.x = self.Kp_linear * distance if distance > self.arrive_threshold else 0.0
+        self.twist.angular.z = self.Kp_angular * angle_error
+        self.cmd_vel_pub.publish(self.twist)
+
+    def follow(self):
+        """带轨迹预测的跟随主逻辑"""
+        rospy.loginfo("开始带轨迹预测的跟随，保持距离 %.1f", self.follow_distance)
+        while not rospy.is_shutdown():
+            target_x, target_y = self.calculate_follow_target()
+            self.p_control(target_x, target_y)
+            self.rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        follower = TurtleFollower()
+        rospy.sleep(0.5)
+        follower.follow()
+    except rospy.ROSInterruptException:
+        pass
