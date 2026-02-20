@@ -168,6 +168,7 @@ catkin_install_python(PROGRAMS
   scripts/error_handle.py
   scripts/task_sequence.py
   scripts/gripper_server_node.py
+  scripts/bathroom_arm_action.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Mark executables for installation

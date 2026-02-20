@@ -68,3 +68,15 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/restaurant_clean_task" TYPE PROGRAM FILES "/home/user/catkin_ws/build/restaurant_clean_task/catkin_generated/installspace/task_sequence.py")
 endif()
 
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/restaurant_clean_task" TYPE PROGRAM FILES "/home/user/catkin_ws/build/restaurant_clean_task/catkin_generated/installspace/gripper_server_node.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/restaurant_clean_task" TYPE PROGRAM FILES "/home/user/catkin_ws/build/restaurant_clean_task/catkin_generated/installspace/bathroom_arm_action.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/restaurant_clean_task/launch" TYPE DIRECTORY FILES "/home/user/catkin_ws/src/restaurant_clean_task/launch/")
+endif()
+
