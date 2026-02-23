@@ -21,6 +21,12 @@ iostream
 -
 iomanip
 -
+std_msgs/String.h
+-
+ctime
+-
+sstream
+-
 
 /opt/ros/noetic/include/ros/advertise_options.h
 ros/forwards.h
@@ -738,6 +744,22 @@ ros/builtin_message_traits.h
 ros/message_operations.h
 -
 std_msgs/MultiArrayDimension.h
+-
+
+/opt/ros/noetic/include/std_msgs/String.h
+string
+-
+vector
+-
+memory
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
 -
 
 /opt/ros/noetic/include/xmlrpcpp/XmlRpcDecl.h

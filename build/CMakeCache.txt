@@ -479,12 +479,6 @@ gtest_hide_internal_symbols:BOOL=OFF
 //Dependencies for the target
 gtest_main_LIB_DEPENDS:STATIC=general;gtest;
 
-//Value Computed by CMake
-learning_topic_BINARY_DIR:STATIC=/home/user/catkin_ws/build/learning_topic
-
-//Value Computed by CMake
-learning_topic_SOURCE_DIR:STATIC=/home/user/catkin_ws/src/learning_topic
-
 //Path to a library.
 lib:FILEPATH=/opt/ros/noetic/lib/libxmlrpcpp.so
 
@@ -532,18 +526,6 @@ sensor_msgs_DIR:PATH=/opt/ros/noetic/share/sensor_msgs/cmake
 
 //The directory containing a CMake configuration file for std_msgs.
 std_msgs_DIR:PATH=/opt/ros/noetic/share/std_msgs/cmake
-
-//The directory containing a CMake configuration file for std_srvs.
-std_srvs_DIR:PATH=/opt/ros/noetic/share/std_srvs/cmake
-
-//Value Computed by CMake
-turtle_polygon_BINARY_DIR:STATIC=/home/user/catkin_ws/build/turtle_polygon
-
-//Value Computed by CMake
-turtle_polygon_SOURCE_DIR:STATIC=/home/user/catkin_ws/src/turtle_polygon
-
-//The directory containing a CMake configuration file for turtlesim.
-turtlesim_DIR:PATH=/opt/ros/noetic/share/turtlesim/cmake
 
 //The directory containing a CMake configuration file for xmlrpcpp.
 xmlrpcpp_DIR:PATH=/opt/ros/noetic/share/xmlrpcpp/cmake

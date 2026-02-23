@@ -9,7 +9,9 @@ project(restaurant_clean_task)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  roscpp
   std_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -59,6 +61,11 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
+add_service_files(
+  FILES
+  GripperControl.srv  # 对应你创建的srv文件名
+)
+
 ## Generate actions in the 'action' folder
 # add_action_files(
 #   FILES
@@ -71,7 +78,10 @@ find_package(catkin REQUIRED COMPONENTS
 #   DEPENDENCIES
 #   std_msgs
 # )
-
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
@@ -102,6 +112,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+  CATKIN_DEPENDS message_runtime
 #  INCLUDE_DIRS include
 #  LIBRARIES restaurant_clean_task
 #  CATKIN_DEPENDS rospy std_msgs
@@ -164,7 +175,7 @@ include_directories(
 # )
 catkin_install_python(PROGRAMS
   scripts/arm_control.py
-  scripts/gripper_ctrl.py
+  scripts/gripper_control.py
   scripts/error_handle.py
   scripts/task_sequence.py
   scripts/gripper_server_node.py

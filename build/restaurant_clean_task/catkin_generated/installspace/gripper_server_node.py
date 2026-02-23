@@ -8,8 +8,8 @@ import sys
 # 将当前脚本所在目录加入 Python 路径，以便导入 gripper_tools
 sys.path.insert(0, os.path.dirname(__file__))
 
-import gripper_tools
+import gripper_control
 
 if __name__ == "__main__":
     print("启动 gripper 服务端...")
-    gripper_tools.start_server()   # 该函数会阻塞，直到节点关闭
+    gripper_control.start_server()   # 该函数会阻塞，直到节点关闭

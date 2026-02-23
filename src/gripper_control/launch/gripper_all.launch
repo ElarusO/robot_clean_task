@@ -12,5 +12,4 @@
             type="gripper_client.py"
             launch-prefix="gnome-terminal -- bash -c 'python3 $(find gripper_control)/scripts/gripper_client.py; echo; read -p &quot;按回车键关闭窗口...&quot;'"
             output="screen"/>
-      <include file="$(find arm_control)/launch/arm_all.launch"/>
 </launch>

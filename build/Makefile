@@ -285,43 +285,69 @@ gtest/fast:
 .PHONY : gtest/fast
 
 #=============================================================================
-# Target rules for targets named std_msgs_generate_messages_py
+# Target rules for targets named rosgraph_msgs_generate_messages_py
 
 # Build rule for target.
-std_msgs_generate_messages_py: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_py
-.PHONY : std_msgs_generate_messages_py
+rosgraph_msgs_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_py
+.PHONY : rosgraph_msgs_generate_messages_py
 
 # fast build rule for target.
-std_msgs_generate_messages_py/fast:
-	$(MAKE) -f restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_py.dir/build.make restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_py.dir/build
-.PHONY : std_msgs_generate_messages_py/fast
+rosgraph_msgs_generate_messages_py/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
+.PHONY : rosgraph_msgs_generate_messages_py/fast
 
 #=============================================================================
-# Target rules for targets named std_msgs_generate_messages_nodejs
+# Target rules for targets named roscpp_generate_messages_lisp
 
 # Build rule for target.
-std_msgs_generate_messages_nodejs: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_nodejs
-.PHONY : std_msgs_generate_messages_nodejs
+roscpp_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_lisp
+.PHONY : roscpp_generate_messages_lisp
 
 # fast build rule for target.
-std_msgs_generate_messages_nodejs/fast:
-	$(MAKE) -f restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build.make restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build
-.PHONY : std_msgs_generate_messages_nodejs/fast
+roscpp_generate_messages_lisp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make restaurant_clean_task/CMakeFiles/roscpp_generate_messages_lisp.dir/build
+.PHONY : roscpp_generate_messages_lisp/fast
 
 #=============================================================================
-# Target rules for targets named std_msgs_generate_messages_lisp
+# Target rules for targets named rosgraph_msgs_generate_messages_eus
 
 # Build rule for target.
-std_msgs_generate_messages_lisp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_lisp
-.PHONY : std_msgs_generate_messages_lisp
+rosgraph_msgs_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_eus
+.PHONY : rosgraph_msgs_generate_messages_eus
 
 # fast build rule for target.
-std_msgs_generate_messages_lisp/fast:
-	$(MAKE) -f restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
-.PHONY : std_msgs_generate_messages_lisp/fast
+rosgraph_msgs_generate_messages_eus/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/build.make restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/build
+.PHONY : rosgraph_msgs_generate_messages_eus/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_generate_messages_cpp
+
+# Build rule for target.
+restaurant_clean_task_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_generate_messages_cpp
+.PHONY : restaurant_clean_task_generate_messages_cpp
+
+# fast build rule for target.
+restaurant_clean_task_generate_messages_cpp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_cpp.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_cpp.dir/build
+.PHONY : restaurant_clean_task_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named roscpp_generate_messages_nodejs
+
+# Build rule for target.
+roscpp_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_nodejs
+.PHONY : roscpp_generate_messages_nodejs
+
+# fast build rule for target.
+roscpp_generate_messages_nodejs/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/roscpp_generate_messages_nodejs.dir/build.make restaurant_clean_task/CMakeFiles/roscpp_generate_messages_nodejs.dir/build
+.PHONY : roscpp_generate_messages_nodejs/fast
 
 #=============================================================================
 # Target rules for targets named std_msgs_generate_messages_eus
@@ -337,6 +363,123 @@ std_msgs_generate_messages_eus/fast:
 .PHONY : std_msgs_generate_messages_eus/fast
 
 #=============================================================================
+# Target rules for targets named restaurant_clean_task_genlisp
+
+# Build rule for target.
+restaurant_clean_task_genlisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_genlisp
+.PHONY : restaurant_clean_task_genlisp
+
+# fast build rule for target.
+restaurant_clean_task_genlisp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_genlisp.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_genlisp.dir/build
+.PHONY : restaurant_clean_task_genlisp/fast
+
+#=============================================================================
+# Target rules for targets named roscpp_generate_messages_py
+
+# Build rule for target.
+roscpp_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_py
+.PHONY : roscpp_generate_messages_py
+
+# fast build rule for target.
+roscpp_generate_messages_py/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/roscpp_generate_messages_py.dir/build.make restaurant_clean_task/CMakeFiles/roscpp_generate_messages_py.dir/build
+.PHONY : roscpp_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named std_msgs_generate_messages_lisp
+
+# Build rule for target.
+std_msgs_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_lisp
+.PHONY : std_msgs_generate_messages_lisp
+
+# fast build rule for target.
+std_msgs_generate_messages_lisp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
+.PHONY : std_msgs_generate_messages_lisp/fast
+
+#=============================================================================
+# Target rules for targets named rosgraph_msgs_generate_messages_nodejs
+
+# Build rule for target.
+rosgraph_msgs_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_nodejs
+.PHONY : rosgraph_msgs_generate_messages_nodejs
+
+# fast build rule for target.
+rosgraph_msgs_generate_messages_nodejs/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build.make restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build
+.PHONY : rosgraph_msgs_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named roscpp_generate_messages_eus
+
+# Build rule for target.
+roscpp_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_eus
+.PHONY : roscpp_generate_messages_eus
+
+# fast build rule for target.
+roscpp_generate_messages_eus/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/roscpp_generate_messages_eus.dir/build.make restaurant_clean_task/CMakeFiles/roscpp_generate_messages_eus.dir/build
+.PHONY : roscpp_generate_messages_eus/fast
+
+#=============================================================================
+# Target rules for targets named roscpp_generate_messages_cpp
+
+# Build rule for target.
+roscpp_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_cpp
+.PHONY : roscpp_generate_messages_cpp
+
+# fast build rule for target.
+roscpp_generate_messages_cpp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make restaurant_clean_task/CMakeFiles/roscpp_generate_messages_cpp.dir/build
+.PHONY : roscpp_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_geneus
+
+# Build rule for target.
+restaurant_clean_task_geneus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_geneus
+.PHONY : restaurant_clean_task_geneus
+
+# fast build rule for target.
+restaurant_clean_task_geneus/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_geneus.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_geneus.dir/build
+.PHONY : restaurant_clean_task_geneus/fast
+
+#=============================================================================
+# Target rules for targets named std_msgs_generate_messages_nodejs
+
+# Build rule for target.
+std_msgs_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_nodejs
+.PHONY : std_msgs_generate_messages_nodejs
+
+# fast build rule for target.
+std_msgs_generate_messages_nodejs/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build.make restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build
+.PHONY : std_msgs_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named std_msgs_generate_messages_py
+
+# Build rule for target.
+std_msgs_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_py
+.PHONY : std_msgs_generate_messages_py
+
+# fast build rule for target.
+std_msgs_generate_messages_py/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_py.dir/build.make restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_py.dir/build
+.PHONY : std_msgs_generate_messages_py/fast
+
+#=============================================================================
 # Target rules for targets named std_msgs_generate_messages_cpp
 
 # Build rule for target.
@@ -348,6 +491,149 @@ std_msgs_generate_messages_cpp: cmake_check_build_system
 std_msgs_generate_messages_cpp/fast:
 	$(MAKE) -f restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make restaurant_clean_task/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
 .PHONY : std_msgs_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_generate_messages
+
+# Build rule for target.
+restaurant_clean_task_generate_messages: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_generate_messages
+.PHONY : restaurant_clean_task_generate_messages
+
+# fast build rule for target.
+restaurant_clean_task_generate_messages/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages.dir/build
+.PHONY : restaurant_clean_task_generate_messages/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_gencpp
+
+# Build rule for target.
+restaurant_clean_task_gencpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_gencpp
+.PHONY : restaurant_clean_task_gencpp
+
+# fast build rule for target.
+restaurant_clean_task_gencpp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_gencpp.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_gencpp.dir/build
+.PHONY : restaurant_clean_task_gencpp/fast
+
+#=============================================================================
+# Target rules for targets named _restaurant_clean_task_generate_messages_check_deps_GripperControl
+
+# Build rule for target.
+_restaurant_clean_task_generate_messages_check_deps_GripperControl: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 _restaurant_clean_task_generate_messages_check_deps_GripperControl
+.PHONY : _restaurant_clean_task_generate_messages_check_deps_GripperControl
+
+# fast build rule for target.
+_restaurant_clean_task_generate_messages_check_deps_GripperControl/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/_restaurant_clean_task_generate_messages_check_deps_GripperControl.dir/build.make restaurant_clean_task/CMakeFiles/_restaurant_clean_task_generate_messages_check_deps_GripperControl.dir/build
+.PHONY : _restaurant_clean_task_generate_messages_check_deps_GripperControl/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_generate_messages_eus
+
+# Build rule for target.
+restaurant_clean_task_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_generate_messages_eus
+.PHONY : restaurant_clean_task_generate_messages_eus
+
+# fast build rule for target.
+restaurant_clean_task_generate_messages_eus/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_eus.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_eus.dir/build
+.PHONY : restaurant_clean_task_generate_messages_eus/fast
+
+#=============================================================================
+# Target rules for targets named rosgraph_msgs_generate_messages_cpp
+
+# Build rule for target.
+rosgraph_msgs_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_cpp
+.PHONY : rosgraph_msgs_generate_messages_cpp
+
+# fast build rule for target.
+rosgraph_msgs_generate_messages_cpp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
+.PHONY : rosgraph_msgs_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_generate_messages_lisp
+
+# Build rule for target.
+restaurant_clean_task_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_generate_messages_lisp
+.PHONY : restaurant_clean_task_generate_messages_lisp
+
+# fast build rule for target.
+restaurant_clean_task_generate_messages_lisp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_lisp.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_lisp.dir/build
+.PHONY : restaurant_clean_task_generate_messages_lisp/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_generate_messages_nodejs
+
+# Build rule for target.
+restaurant_clean_task_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_generate_messages_nodejs
+.PHONY : restaurant_clean_task_generate_messages_nodejs
+
+# fast build rule for target.
+restaurant_clean_task_generate_messages_nodejs/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_nodejs.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_nodejs.dir/build
+.PHONY : restaurant_clean_task_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_gennodejs
+
+# Build rule for target.
+restaurant_clean_task_gennodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_gennodejs
+.PHONY : restaurant_clean_task_gennodejs
+
+# fast build rule for target.
+restaurant_clean_task_gennodejs/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_gennodejs.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_gennodejs.dir/build
+.PHONY : restaurant_clean_task_gennodejs/fast
+
+#=============================================================================
+# Target rules for targets named rosgraph_msgs_generate_messages_lisp
+
+# Build rule for target.
+rosgraph_msgs_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_lisp
+.PHONY : rosgraph_msgs_generate_messages_lisp
+
+# fast build rule for target.
+rosgraph_msgs_generate_messages_lisp/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make restaurant_clean_task/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
+.PHONY : rosgraph_msgs_generate_messages_lisp/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_generate_messages_py
+
+# Build rule for target.
+restaurant_clean_task_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_generate_messages_py
+.PHONY : restaurant_clean_task_generate_messages_py
+
+# fast build rule for target.
+restaurant_clean_task_generate_messages_py/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_py.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_generate_messages_py.dir/build
+.PHONY : restaurant_clean_task_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named restaurant_clean_task_genpy
+
+# Build rule for target.
+restaurant_clean_task_genpy: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 restaurant_clean_task_genpy
+.PHONY : restaurant_clean_task_genpy
+
+# fast build rule for target.
+restaurant_clean_task_genpy/fast:
+	$(MAKE) -f restaurant_clean_task/CMakeFiles/restaurant_clean_task_genpy.dir/build.make restaurant_clean_task/CMakeFiles/restaurant_clean_task_genpy.dir/build
+.PHONY : restaurant_clean_task_genpy/fast
 
 #=============================================================================
 # Target rules for targets named sensor_msgs_generate_messages_cpp
@@ -636,136 +922,6 @@ gripper_control_generate_messages_lisp/fast:
 .PHONY : gripper_control_generate_messages_lisp/fast
 
 #=============================================================================
-# Target rules for targets named roscpp_generate_messages_cpp
-
-# Build rule for target.
-roscpp_generate_messages_cpp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_cpp
-.PHONY : roscpp_generate_messages_cpp
-
-# fast build rule for target.
-roscpp_generate_messages_cpp/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make restaurant_controller/CMakeFiles/roscpp_generate_messages_cpp.dir/build
-.PHONY : roscpp_generate_messages_cpp/fast
-
-#=============================================================================
-# Target rules for targets named roscpp_generate_messages_eus
-
-# Build rule for target.
-roscpp_generate_messages_eus: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_eus
-.PHONY : roscpp_generate_messages_eus
-
-# fast build rule for target.
-roscpp_generate_messages_eus/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/roscpp_generate_messages_eus.dir/build.make restaurant_controller/CMakeFiles/roscpp_generate_messages_eus.dir/build
-.PHONY : roscpp_generate_messages_eus/fast
-
-#=============================================================================
-# Target rules for targets named rosgraph_msgs_generate_messages_nodejs
-
-# Build rule for target.
-rosgraph_msgs_generate_messages_nodejs: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_nodejs
-.PHONY : rosgraph_msgs_generate_messages_nodejs
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_nodejs/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build.make restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build
-.PHONY : rosgraph_msgs_generate_messages_nodejs/fast
-
-#=============================================================================
-# Target rules for targets named roscpp_generate_messages_py
-
-# Build rule for target.
-roscpp_generate_messages_py: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_py
-.PHONY : roscpp_generate_messages_py
-
-# fast build rule for target.
-roscpp_generate_messages_py/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/roscpp_generate_messages_py.dir/build.make restaurant_controller/CMakeFiles/roscpp_generate_messages_py.dir/build
-.PHONY : roscpp_generate_messages_py/fast
-
-#=============================================================================
-# Target rules for targets named roscpp_generate_messages_nodejs
-
-# Build rule for target.
-roscpp_generate_messages_nodejs: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_nodejs
-.PHONY : roscpp_generate_messages_nodejs
-
-# fast build rule for target.
-roscpp_generate_messages_nodejs/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/roscpp_generate_messages_nodejs.dir/build.make restaurant_controller/CMakeFiles/roscpp_generate_messages_nodejs.dir/build
-.PHONY : roscpp_generate_messages_nodejs/fast
-
-#=============================================================================
-# Target rules for targets named rosgraph_msgs_generate_messages_cpp
-
-# Build rule for target.
-rosgraph_msgs_generate_messages_cpp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_cpp
-.PHONY : rosgraph_msgs_generate_messages_cpp
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_cpp/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
-.PHONY : rosgraph_msgs_generate_messages_cpp/fast
-
-#=============================================================================
-# Target rules for targets named rosgraph_msgs_generate_messages_eus
-
-# Build rule for target.
-rosgraph_msgs_generate_messages_eus: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_eus
-.PHONY : rosgraph_msgs_generate_messages_eus
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_eus/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/build.make restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/build
-.PHONY : rosgraph_msgs_generate_messages_eus/fast
-
-#=============================================================================
-# Target rules for targets named rosgraph_msgs_generate_messages_lisp
-
-# Build rule for target.
-rosgraph_msgs_generate_messages_lisp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_lisp
-.PHONY : rosgraph_msgs_generate_messages_lisp
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_lisp/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
-.PHONY : rosgraph_msgs_generate_messages_lisp/fast
-
-#=============================================================================
-# Target rules for targets named roscpp_generate_messages_lisp
-
-# Build rule for target.
-roscpp_generate_messages_lisp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 roscpp_generate_messages_lisp
-.PHONY : roscpp_generate_messages_lisp
-
-# fast build rule for target.
-roscpp_generate_messages_lisp/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make restaurant_controller/CMakeFiles/roscpp_generate_messages_lisp.dir/build
-.PHONY : roscpp_generate_messages_lisp/fast
-
-#=============================================================================
-# Target rules for targets named rosgraph_msgs_generate_messages_py
-
-# Build rule for target.
-rosgraph_msgs_generate_messages_py: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 rosgraph_msgs_generate_messages_py
-.PHONY : rosgraph_msgs_generate_messages_py
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_py/fast:
-	$(MAKE) -f restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make restaurant_controller/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
-.PHONY : rosgraph_msgs_generate_messages_py/fast
-
-#=============================================================================
 # Target rules for targets named restaurant_arm_pour
 
 # Build rule for target.
@@ -800,11 +956,33 @@ help:
 	@echo "... gmock"
 	@echo "... gtest_main"
 	@echo "... gtest"
-	@echo "... std_msgs_generate_messages_py"
-	@echo "... std_msgs_generate_messages_nodejs"
-	@echo "... std_msgs_generate_messages_lisp"
+	@echo "... rosgraph_msgs_generate_messages_py"
+	@echo "... roscpp_generate_messages_lisp"
+	@echo "... rosgraph_msgs_generate_messages_eus"
+	@echo "... restaurant_clean_task_generate_messages_cpp"
+	@echo "... roscpp_generate_messages_nodejs"
 	@echo "... std_msgs_generate_messages_eus"
+	@echo "... restaurant_clean_task_genlisp"
+	@echo "... roscpp_generate_messages_py"
+	@echo "... std_msgs_generate_messages_lisp"
+	@echo "... rosgraph_msgs_generate_messages_nodejs"
+	@echo "... roscpp_generate_messages_eus"
+	@echo "... roscpp_generate_messages_cpp"
+	@echo "... restaurant_clean_task_geneus"
+	@echo "... std_msgs_generate_messages_nodejs"
+	@echo "... std_msgs_generate_messages_py"
 	@echo "... std_msgs_generate_messages_cpp"
+	@echo "... restaurant_clean_task_generate_messages"
+	@echo "... restaurant_clean_task_gencpp"
+	@echo "... _restaurant_clean_task_generate_messages_check_deps_GripperControl"
+	@echo "... restaurant_clean_task_generate_messages_eus"
+	@echo "... rosgraph_msgs_generate_messages_cpp"
+	@echo "... restaurant_clean_task_generate_messages_lisp"
+	@echo "... restaurant_clean_task_generate_messages_nodejs"
+	@echo "... restaurant_clean_task_gennodejs"
+	@echo "... rosgraph_msgs_generate_messages_lisp"
+	@echo "... restaurant_clean_task_generate_messages_py"
+	@echo "... restaurant_clean_task_genpy"
 	@echo "... sensor_msgs_generate_messages_cpp"
 	@echo "... sensor_msgs_generate_messages_eus"
 	@echo "... geometry_msgs_generate_messages_eus"
@@ -827,16 +1005,6 @@ help:
 	@echo "... gripper_control_generate_messages"
 	@echo "... gripper_control_generate_messages_nodejs"
 	@echo "... gripper_control_generate_messages_lisp"
-	@echo "... roscpp_generate_messages_cpp"
-	@echo "... roscpp_generate_messages_eus"
-	@echo "... rosgraph_msgs_generate_messages_nodejs"
-	@echo "... roscpp_generate_messages_py"
-	@echo "... roscpp_generate_messages_nodejs"
-	@echo "... rosgraph_msgs_generate_messages_cpp"
-	@echo "... rosgraph_msgs_generate_messages_eus"
-	@echo "... rosgraph_msgs_generate_messages_lisp"
-	@echo "... roscpp_generate_messages_lisp"
-	@echo "... rosgraph_msgs_generate_messages_py"
 	@echo "... restaurant_arm_pour"
 .PHONY : help
 

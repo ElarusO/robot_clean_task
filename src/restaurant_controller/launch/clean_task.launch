@@ -1,0 +1,3 @@
+<launch>
+    <node name="restaurant_controller" pkg="restaurant_controller" type="restaurant_arm_pour" output="screen" />
+</launch>

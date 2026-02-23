@@ -12,8 +12,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import rospy
 import arm_control
-# import gripper_control
-import gripper_ctrl as gripper_control
+import gripper_control
 import error_handle
 
 
@@ -128,9 +127,9 @@ def run_stage2():
 
 # ========== 主流程 ==========
 def main():
-    #tiaoshi
-    print("gripper_control 模块路径:", gripper_control.__file__)
-    print("模块中的属性:", dir(gripper_control))
+    # #tiaoshi
+    # print("gripper_control 模块路径:", gripper_control.__file__)
+    # print("模块中的属性:", dir(gripper_control))
 
     rospy.init_node('task_sequence_node', anonymous=True)
     print("===== 餐厅3D清洁任务开始 =====")

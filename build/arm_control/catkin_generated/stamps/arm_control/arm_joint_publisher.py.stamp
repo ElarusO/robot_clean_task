@@ -1,131 +1,144 @@
 #!/usr/bin/env python3
 """
 机械臂关节角度发布节点
-赛事适配说明：适配5轴机械臂，每关节旋转范围0-270°
-项目：ROS节点通信与5轴机械臂关节基础控制
-作者：[你的名字]
+核心特性：
+1. 1Hz持续发布5个关节完整信息，永不中断
+2. 初始角度：0°、30°、60°、90°、120°
+3. 独立线程处理用户输入，不阻塞发布流程
 """
 
 import rospy
+import threading
 import sys
-import select          # 非阻塞键盘输入
 from sensor_msgs.msg import JointState
 
 class ArmJointPublisher:
     def __init__(self):
-        """
-        初始化发布节点
-        赛事参数说明：关节名称按赛事要求固定为joint1-joint5
-        """
         # 初始化ROS节点
         rospy.init_node('arm_joint_publisher', anonymous=True)
         
-        # 创建话题发布者
-        self.pub = rospy.Publisher('/arm_joint_angles', JointState, queue_size=10)
+        # 创建话题发布者（队列大小设为50，防止消息堆积）
+        self.pub = rospy.Publisher('/arm_joint_angles', JointState, queue_size=50)
         
-        # 初始化关节状态
+        # 初始化关节状态消息
         self.joint_state = JointState()
+        self.joint_state.name = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5']  # 固定关节名称
         
-        # 设置关节名称（赛事固定参数）
-        self.joint_state.name = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5']
-        
-        # 设置初始角度值（单位：弧度）
-        # 赛事初始角度：0°, 30°, 60°, 90°, 120°
+        # 初始角度（转弧度）：0°、30°、60°、90°、120°
         self.joint_state.position = [
-            0.0,                      # joint1: 0度
-            self.deg_to_rad(30),     # joint2: 30度
-            self.deg_to_rad(60),     # joint3: 60度
-            self.deg_to_rad(90),     # joint4: 90度
-            self.deg_to_rad(120)     # joint5: 120度
+            self.deg_to_rad(0),
+            self.deg_to_rad(30),
+            self.deg_to_rad(60),
+            self.deg_to_rad(90),
+            self.deg_to_rad(120)
         ]
         
-        # 存储上一帧角度，用于手动修改时的比较
-        self.previous_angles = self.joint_state.position.copy()
+        # 线程锁：保护关节角度数据（防止读写冲突）
+        self.angle_lock = threading.Lock()
         
-        # 设置发布频率：1Hz（赛事要求）
+        # 设置发布频率：严格1Hz
         self.rate = rospy.Rate(1)
         
-        rospy.loginfo("机械臂关节发布节点已启动，按Ctrl+C退出")
-        rospy.loginfo("关节角度限制：0-270度")
+        # 标记节点是否运行
+        self.is_running = True
         
+        rospy.loginfo("=== 机械臂关节发布节点启动 ===")
+        rospy.loginfo(f"发布频率：1Hz | 初始角度：0°, 30°, 60°, 90°, 120°")
+        rospy.loginfo("输入 'update' 可修改关节角度，输入 'exit' 退出节点")
+        rospy.loginfo("话题名称：/arm_joint_angles")
+
     def deg_to_rad(self, degrees):
         """角度转弧度"""
-        return degrees * 3.141592653589793 / 180.0
-    
+        return degrees * 3.1415926535 / 180.0
+
     def rad_to_deg(self, radians):
         """弧度转角度"""
-        return radians * 180.0 / 3.141592653589793
-    
+        return radians * 180.0 / 3.1415926535
+
     def validate_angle(self, angle_deg):
-        """
-        验证角度是否在有效范围内
-        赛事要求：每个关节旋转角度≥270°，这里限制为0-270度
-        """
+        """验证角度是否在0-270°范围内"""
         if 0 <= angle_deg <= 270:
             return True
-        else:
-            rospy.logwarn(f"角度 {angle_deg}° 超出范围！有效范围：0-270度")
-            return False
-    
-    def update_joint_angles(self):
-        """
-        手动更新关节角度
-        提供终端输入方式，支持0-270°范围校验
-        """
-        rospy.loginfo("\n=== 手动角度修改模式 ===")
-        rospy.loginfo("当前关节角度：")
-        for i, name in enumerate(self.joint_state.name):
-            angle_deg = self.rad_to_deg(self.joint_state.position[i])
-            rospy.loginfo(f"{name}: {angle_deg:.1f}°")
-        
-        try:
-            new_angles_deg = []
-            for i, name in enumerate(self.joint_state.name):
-                user_input = input(f"输入 {name} 的新角度(0-270°) [当前: {self.rad_to_deg(self.joint_state.position[i]):.1f}°]: ")
+        rospy.logwarn(f"角度 {angle_deg}° 无效！有效范围：0-270°")
+        return False
+
+    def update_angles_interactive(self):
+        """独立线程：处理用户输入修改角度"""
+        while self.is_running and not rospy.is_shutdown():
+            try:
+                # 等待用户输入（这里的阻塞仅影响该线程，不影响发布主线程）
+                user_input = input("\n请输入指令（update/exit）：").strip().lower()
                 
-                if user_input.strip():
-                    new_angle = float(user_input)
-                    if self.validate_angle(new_angle):
-                        new_angles_deg.append(new_angle)
-                    else:
-                        rospy.logwarn(f"角度无效，保持原值")
-                        new_angles_deg.append(self.rad_to_deg(self.joint_state.position[i]))
+                if user_input == 'exit':
+                    self.is_running = False
+                    rospy.loginfo("收到退出指令，节点即将停止")
+                    break
+                
+                elif user_input == 'update':
+                    rospy.loginfo("\n--- 开始修改关节角度 ---")
+                    new_angles_rad = []
+                    
+                    # 逐个关节输入新角度
+                    for i, joint_name in enumerate(self.joint_state.name):
+                        current_deg = self.rad_to_deg(self.joint_state.position[i])
+                        while True:
+                            try:
+                                new_deg = float(input(f"{joint_name}（当前{current_deg:.1f}°）："))
+                                if self.validate_angle(new_deg):
+                                    new_angles_rad.append(self.deg_to_rad(new_deg))
+                                    break
+                            except ValueError:
+                                rospy.logwarn("输入错误！请输入数字（如：45）")
+                    
+                    # 加锁更新角度（防止和发布线程冲突）
+                    with self.angle_lock:
+                        self.joint_state.position = new_angles_rad
+                    rospy.loginfo("角度修改完成！已更新发布内容")
+                
                 else:
-                    new_angles_deg.append(self.rad_to_deg(self.joint_state.position[i]))
+                    rospy.logwarn("无效指令！仅支持：update（修改角度）、exit（退出）")
             
-            # 更新关节角度
-            for i in range(len(self.joint_state.position)):
-                self.previous_angles[i] = self.joint_state.position[i]
-                self.joint_state.position[i] = self.deg_to_rad(new_angles_deg[i])
-            
-            rospy.loginfo("关节角度已更新！")
-            
-        except ValueError:
-            rospy.logerr("输入错误！请输入有效的数字")
-        except KeyboardInterrupt:
-            rospy.loginfo("角度修改取消")
-    
-    def publish_joint_states(self):
-        loop_count = 0
-        while not rospy.is_shutdown():
-            self.joint_state.header.stamp = rospy.Time.now()
-            self.pub.publish(self.joint_state)
+            except EOFError:
+                # 处理终端输入异常（如Ctrl+D）
+                continue
+            except KeyboardInterrupt:
+                self.is_running = False
+                break
+
+    def publish_loop(self):
+        """主线程：1Hz持续发布关节状态"""
+        # 启动用户输入处理线程
+        input_thread = threading.Thread(target=self.update_angles_interactive)
+        input_thread.daemon = True  # 守护线程：主程序退出时自动结束
+        input_thread.start()
         
-        # 每10次循环询问一次（发布频率1Hz，即10秒一次）
-            loop_count += 1
-            if loop_count % 10 == 0:
-                try:
-                    response = input("\n是否修改关节角度？(y/n, 默认n): ")
-                    if response.lower() == 'y':
-                        self.update_joint_angles()
-                except:
-                    pass
+        # 核心发布循环
+        while self.is_running and not rospy.is_shutdown():
+            try:
+                # 加锁读取角度（防止读写冲突）
+                with self.angle_lock:
+                    self.joint_state.header.stamp = rospy.Time.now()  # 更新时间戳
+                    self.pub.publish(self.joint_state)  # 发布消息
+                
+                # 打印当前发布状态（可选，方便调试）
+                current_degs = [f"{self.rad_to_deg(rad):.1f}°" for rad in self.joint_state.position]
+                rospy.logdebug(f"发布关节角度：{current_degs}")  # debug级别，不刷屏
+                
+                # 严格1Hz睡眠（核心：保证发布频率）
+                self.rate.sleep()
+            
+            except rospy.ROSInterruptException:
+                break
+            except Exception as e:
+                rospy.logerr(f"发布异常：{e}")
+                continue
         
-        self.rate.sleep()
+        # 节点退出清理
+        rospy.loginfo("发布节点已停止")
 
 if __name__ == '__main__':
     try:
         publisher = ArmJointPublisher()
-        publisher.publish_joint_states()
+        publisher.publish_loop()
     except rospy.ROSInterruptException:
         pass

@@ -1,0 +1,5 @@
+float64 angle  # 爪部目标角度
+---
+bool success   # 执行结果
+float64 current_angle
+string message # 状态信息

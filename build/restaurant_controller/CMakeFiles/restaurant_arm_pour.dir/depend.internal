@@ -63,5 +63,6 @@ restaurant_controller/CMakeFiles/restaurant_arm_pour.dir/src/restaurant_arm_pour
  /opt/ros/noetic/include/std_msgs/Float64MultiArray.h
  /opt/ros/noetic/include/std_msgs/MultiArrayDimension.h
  /opt/ros/noetic/include/std_msgs/MultiArrayLayout.h
+ /opt/ros/noetic/include/std_msgs/String.h
  /opt/ros/noetic/include/xmlrpcpp/XmlRpcDecl.h
  /opt/ros/noetic/include/xmlrpcpp/XmlRpcValue.h

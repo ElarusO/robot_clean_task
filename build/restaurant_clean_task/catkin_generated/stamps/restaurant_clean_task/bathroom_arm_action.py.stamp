@@ -13,7 +13,7 @@ import rospy
 sys.path.insert(0, os.path.dirname(__file__))
 
 import arm_control
-import gripper_ctrl as gripper_control
+import gripper_control
 import error_handle
 
 # ========== 预设角度（自定义，符合0-270°范围）==========

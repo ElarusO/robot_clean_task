@@ -2,25 +2,25 @@
 <launch>
     <!-- 
         机械臂关节基础控制启动文件
-        同时启动发布节点和订阅节点
+        分别在新终端中启动发布节点和订阅节点（使用 xterm）
         赛事适配：5轴机械臂，话题/arm_joint_angles
     -->
 
-    <!-- 发布节点：arm_joint_publisher -->
+    <!-- 发布节点：arm_joint_publisher，在新 xterm 中启动 -->
     <node 
         name="arm_joint_publisher" 
         pkg="arm_control" 
         type="arm_joint_publisher.py" 
         output="screen"
-        required="true"   
     />
 
-    <!-- 订阅节点：arm_state_subscriber -->
+    <!-- 订阅节点：arm_state_subscriber，在新 xterm 中启动 -->
     <node 
         name="arm_state_subscriber" 
         pkg="arm_control" 
         type="arm_state_subscriber.py" 
         output="screen"
+        launch-prefix="gnome-terminal -- bash -c 'python3 $(find arm_control)/scripts/arm_state_subscriber.py; echo; read -p &quot;按回车键关闭窗口...&quot;'"
     />
 
 </launch>
