@@ -212,3 +212,266 @@ bathroom_arm_config:
   faucet_rotate_angle: 1.57 # 水龙头旋转角度（rad）
   grip_force: 5.0           # 卫浴用品抓取力（N）
 ```
+
+
+# ROS餐厅赛项功能包异常处理说明
+## 一、文档概述
+本文档针对ROS餐厅赛项完整任务逻辑功能包及附加的`bathroom_arm_action`节点（卫浴赛项核心动作逻辑封装），明确各环节异常类型、处理策略、错误码定义及日志规范，保障系统鲁棒性与可维护性。
+
+## 二、核心设计原则
+1. **分级处理**：轻微异常（如传感器临时抖动）自动恢复；严重异常（如硬件通信中断）触发告警并终止任务；
+2. **日志可追溯**：所有异常需记录上下文（时间、节点、任务阶段、参数）；
+3. **解耦性**：异常处理逻辑不侵入核心业务逻辑，通过ROS的`try-catch`、服务/动作回调返回码、话题状态监听实现；
+4. **用户可感知**：关键异常通过ROS话题/可视化界面输出提示，便于现场调试。
+
+## 三、通用异常分类与处理策略
+### 3.1 基础通信异常
+| 异常类型                | 场景示例                                  | 处理策略                                                                 |
+|-------------------------|-------------------------------------------|--------------------------------------------------------------------------|
+| ROS节点启动失败         | 依赖的库缺失、节点名冲突、权限不足        | 1. 启动脚本中检查依赖；2. 输出明确错误日志（缺失库名/冲突节点名）；3. 终止启动并返回错误码100。 |
+| 话题/服务/动作连接超时  | 目标节点未启动、网络隔离、话题名拼写错误  | 1. 启动时检查依赖的话题/服务/动作列表；2. 超时（默认5s）后重试3次；3. 仍失败则记录日志并触发告警（错误码101）。 |
+| 消息发布/订阅异常       | 消息类型不匹配、队列满、发布者无权限      | 1. 发布前校验消息类型；2. 队列满时清空缓存并重试；3. 权限异常输出系统权限日志（错误码102）。 |
+
+### 3.2 硬件交互异常
+| 异常类型                | 场景示例                                  | 处理策略                                                                 |
+|-------------------------|-------------------------------------------|--------------------------------------------------------------------------|
+| 传感器数据异常          | 激光雷达/摄像头无数据、数据超出合理范围   | 1. 校验数据阈值（如距离<0或>10m）；2. 临时异常则丢弃该帧数据，使用上一帧有效值；3. 连续10帧异常则标记传感器故障（错误码200）。 |
+| 执行器（机械臂/底盘）无响应 | 电机卡死、串口通信中断、执行指令超时      | 1. 指令发送后等待ACK（默认3s）；2. 超时后发送停止指令并重试2次；3. 仍失败则触发硬件告警（错误码201），停止当前任务并复位执行器。 |
+| 硬件状态反馈异常        | 执行器状态与指令不符（如指令前进但反馈静止） | 1. 对比指令与反馈状态；2. 单次异常则重新发送指令；3. 连续3次不符则判定硬件故障（错误码202）。 |
+
+### 3.3 任务逻辑异常
+| 异常类型                | 场景示例                                  | 处理策略                                                                 |
+|-------------------------|-------------------------------------------|--------------------------------------------------------------------------|
+| 任务阶段跳转失败        | 未完成上一阶段却触发下一阶段、阶段条件不满足 | 1. 增加阶段状态校验（如标志位/计数器）；2. 跳转失败时回滚到上一有效阶段；3. 记录阶段上下文（错误码300）。 |
+| 目标识别/定位失败       | 餐桌/餐具识别不到、坐标计算错误           | 1. 调用备用识别模型；2. 定位失败时使用预设坐标；3. 连续5次失败则终止当前子任务（错误码301）。 |
+| 资源抢占冲突            | 机械臂与底盘同时请求控制权限              | 1. 设计权限优先级（机械臂>底盘）；2. 冲突时阻塞低优先级任务，释放后重试；3. 记录资源占用日志（错误码302）。 |
+
+## 四、`bathroom_arm_action`节点（卫浴赛项）专属异常处理
+### 4.1 专属异常场景
+| 异常类型                | 场景示例                                  | 处理策略                                                                 |
+|-------------------------|-------------------------------------------|--------------------------------------------------------------------------|
+| 卫浴配件抓取异常        | 毛巾/洗漱杯抓取偏移、夹爪力度不足/过大    | 1. 实时反馈夹爪压力值，动态调整力度；2. 抓取偏移时重新规划抓取位姿；3. 连续3次抓取失败则切换抓取方式（错误码400）。 |
+| 防水/限位触发异常       | 机械臂进入防水禁区、关节限位报警          | 1. 预设防水区域坐标，运动前校验；2. 触发限位时立即停止运动并回退安全位置；3. 记录限位触发位置（错误码401）。 |
+| 卫浴动作流程异常        | 如“放水→取杯→接水”流程乱序                | 1. 基于有限状态机（FSM）管控流程；2. 乱序时重置流程到初始状态；3. 输出流程乱序的触发条件（错误码402）。 |
+
+### 4.2 与餐厅赛项的联动异常处理
+若`bathroom_arm_action`作为附加节点与餐厅赛项节点共存：
+1. 资源冲突：机械臂权限优先分配给卫浴赛项（附加项），餐厅赛项暂存任务，卫浴任务完成后恢复；
+2. 通信隔离：卫浴节点异常时不影响餐厅赛项核心任务，仅标记附加项故障（错误码403）；
+3. 日志隔离：卫浴节点异常日志单独输出到`/bathroom_arm_error.log`，避免混淆餐厅赛项日志。
+
+## 五、错误码规范
+| 错误码区间 | 归属模块               | 说明                     |
+|------------|------------------------|--------------------------|
+| 100-199    | ROS通信层              | 节点/话题/服务相关异常   |
+| 200-299    | 硬件交互层             | 传感器/执行器相关异常    |
+| 300-399    | 餐厅赛项任务逻辑层     | 任务流程/阶段相关异常    |
+| 400-499    | bathroom_arm_action节点 | 卫浴赛项专属异常         |
+| 900-999    | 系统级异常             | 如电源故障、系统崩溃     |
+
+## 六、日志输出规范
+1. **日志格式**：`[时间戳][节点名][错误码][任务阶段] 异常描述 + 上下文参数`  
+   示例：`[2024-05-20 10:23:45][dining_arm][301][餐具抓取阶段] 餐桌识别失败，当前摄像头坐标：x=1.2,y=0.5,z=0.8`
+2. **日志级别**：
+   - DEBUG：调试信息（如正常阶段跳转）；
+   - WARN：轻微异常（如单次传感器数据抖动）；
+   - ERROR：严重异常（如硬件故障、任务终止）；
+   - FATAL：系统级故障（如节点崩溃）。
+3. **日志存储**：
+   - 餐厅赛项核心日志：`~/.ros/log/dining_task.log`；
+   - bathroom_arm_action日志：`~/.ros/log/bathroom_arm.log`；
+   - 异常汇总日志：`~/.ros/log/error_summary.log`（每日归档）。
+
+## 七、异常恢复机制
+1. **自动恢复**：
+   - 通信超时：重试3次，间隔1s；
+   - 传感器单帧异常：丢弃数据，使用上一帧；
+   - 执行器单次无响应：重新发送指令。
+2. **手动恢复**：
+   - 严重异常（如错误码201/401）触发后，系统输出恢复提示（如“机械臂无响应，请检查串口连接”）；
+   - 提供ROS服务`/recovery_task`，支持手动重置指定任务阶段；
+   - 提供`/reset_arm`服务，重置bathroom_arm_action节点到初始状态。
+
+## 八、代码层实现示例（关键片段）
+### 8.1 通用异常捕获（餐厅赛项节点）
+```python
+import rospy
+from std_srvs.srv import Empty, EmptyResponse
+
+class DiningTaskNode:
+    def __init__(self):
+        rospy.init_node("dining_task_node")
+        self.task_phase = 0  # 0:初始化,1:导航,2:抓取,3:放置
+        self.error_code = 0
+        # 注册恢复服务
+        self.recovery_srv = rospy.Service("/recovery_task", Empty, self.recovery_callback)
+
+    def check_topic_connection(self, topic_name, timeout=5):
+        """检查话题连接"""
+        try:
+            start_time = rospy.Time.now()
+            while not rospy.is_shutdown():
+                if rospy.Time.now() - start_time > rospy.Duration(timeout):
+                    self.error_code = 101
+                    rospy.logerr(f"[错误码{self.error_code}] 话题{topic_name}连接超时")
+                    return False
+                if rospy.get_published_topics().count(topic_name):
+                    return True
+                rospy.sleep(0.1)
+        except Exception as e:
+            self.error_code = 102
+            rospy.logerr(f"[错误码{self.error_code}] 话题检查异常：{str(e)}")
+            return False
+
+    def execute_task_phase(self):
+        """执行任务阶段，捕获逻辑异常"""
+        try:
+            if self.task_phase == 1:
+                self.nav_to_table()
+            elif self.task_phase == 2:
+                self.grab_tableware()
+            # 其他阶段...
+        except Exception as e:
+            self.error_code = 300
+            rospy.logerr(f"[错误码{self.error_code}] 任务阶段{self.task_phase}执行失败：{str(e)}")
+            self.rollback_phase()  # 回滚到上一阶段
+
+    def recovery_callback(self, req):
+        """恢复任务回调"""
+        self.task_phase = 0
+        self.error_code = 0
+        rospy.loginfo("任务已重置到初始阶段")
+        return EmptyResponse()
+
+if __name__ == "__main__":
+    node = DiningTaskNode()
+    try:
+        if not node.check_topic_connection("/table_detection"):
+            rospy.signal_shutdown("关键话题连接失败")
+        node.execute_task_phase()
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        rospy.logwarn("节点被中断")
+    except Exception as e:
+        rospy.logfatal(f"系统级异常：{str(e)}")
+```
+
+### 8.2 bathroom_arm_action节点异常处理（动作服务器）
+```cpp
+#include <ros/ros.h>
+#include <actionlib/server/simple_action_server.h>
+#include "bathroom_arm/BathroomArmAction.h"
+
+class BathroomArmActionServer {
+private:
+    ros::NodeHandle nh_;
+    actionlib::SimpleActionServer<bathroom_arm::BathroomArmAction> as_;
+    std::string action_name_;
+    bathroom_arm::BathroomArmFeedback feedback_;
+    bathroom_arm::BathroomArmResult result_;
+    int error_code_;
+
+    // 检查夹爪压力
+    bool check_gripper_pressure(float pressure) {
+        if (pressure < 5.0 || pressure > 30.0) { // 压力阈值
+            error_code_ = 400;
+            ROS_ERROR("[错误码%d] 夹爪压力异常：%.2f", error_code_, pressure);
+            return false;
+        }
+        return true;
+    }
+
+    // 检查防水区域
+    bool check_waterproof_area(float x, float y) {
+        // 预设防水区域：x∈[0, 0.5], y∈[0, 0.5]
+        if (x >= 0 && x <= 0.5 && y >= 0 && y <= 0.5) {
+            error_code_ = 401;
+            ROS_ERROR("[错误码%d] 机械臂进入防水禁区：(%.2f, %.2f)", error_code_, x, y);
+            // 立即回退安全位置
+            move_to_safe_position();
+            return false;
+        }
+        return true;
+    }
+
+    void executeCB(const bathroom_arm::BathroomArmGoalConstPtr& goal) {
+        ros::Rate r(10);
+        bool success = true;
+        error_code_ = 0;
+
+        // 执行抓取动作
+        for (int i = 0; i < goal->grab_steps; i++) {
+            if (as_.isPreemptRequested() || !ros::ok()) {
+                ROS_WARN("动作被抢占/节点异常");
+                as_.setPreempted();
+                success = false;
+                break;
+            }
+
+            // 检查压力和防水区域
+            float current_pressure = get_gripper_pressure(); // 读取硬件压力
+            float x = get_arm_x(), y = get_arm_y(); // 读取机械臂坐标
+            if (!check_gripper_pressure(current_pressure) || !check_waterproof_area(x, y)) {
+                success = false;
+                break;
+            }
+
+            // 反馈进度
+            feedback_.progress = (i+1)*100.0 / goal->grab_steps;
+            as_.publishFeedback(feedback_);
+            r.sleep();
+        }
+
+        // 设置结果
+        if (success) {
+            result_.success = true;
+            result_.error_code = 0;
+            as_.setSucceeded(result_);
+        } else {
+            result_.success = false;
+            result_.error_code = error_code_;
+            as_.setAborted(result_);
+        }
+    }
+
+public:
+    BathroomArmActionServer(std::string name) : as_(nh_, name, boost::bind(&BathroomArmActionServer::executeCB, this, _1), false),
+                                               action_name_(name) {
+        as_.start();
+        ROS_INFO("bathroom_arm_action 动作服务器启动");
+    }
+
+    ~BathroomArmActionServer() {}
+
+    void move_to_safe_position() {
+        // 发送机械臂回退安全位置指令
+        ROS_INFO("机械臂回退到安全位置");
+    }
+
+    float get_gripper_pressure() {
+        // 模拟读取硬件压力值
+        return 20.0;
+    }
+
+    float get_arm_x() { return 0.6; }
+    float get_arm_y() { return 0.6; }
+};
+
+int main(int argc, char** argv) {
+    ros::init(argc, argv, "bathroom_arm_action_server");
+    try {
+        BathroomArmActionServer arm_server("bathroom_arm_action");
+        ros::spin();
+    } catch (std::exception& e) {
+        ROS_FATAL("bathroom_arm_action 节点异常：%s", e.what());
+        return 1;
+    }
+    return 0;
+}
+```
+
+## 九、调试与维护建议
+1. 部署阶段：开启ROS_DEBUG日志，验证所有异常场景的触发与处理逻辑；
+2. 运行阶段：定期检查`error_summary.log`，统计高频异常（如传感器数据异常）并优化硬件/算法；
+3. 故障定位：通过错误码+上下文日志快速定位问题，优先排查硬件连接（如串口、电源）；
+4. 迭代优化：针对现场高频异常，补充异常处理逻辑（如新增特定场景的重试策略）。
