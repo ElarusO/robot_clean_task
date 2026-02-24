@@ -12,4 +12,4 @@ import gripper_control
 
 if __name__ == "__main__":
     print("启动 gripper 服务端...")
-    gripper_control.start_server()   # 该函数会阻塞，直到节点关闭
+    gripper_control.start_server()   # 函数阻塞，直到节点关闭

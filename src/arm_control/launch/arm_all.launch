@@ -2,11 +2,10 @@
 <launch>
     <!-- 
         机械臂关节基础控制启动文件
-        分别在新终端中启动发布节点和订阅节点（使用 xterm）
-        赛事适配：5轴机械臂，话题/arm_joint_angles
+        话题/arm_joint_angles
     -->
 
-    <!-- 发布节点：arm_joint_publisher，在新 xterm 中启动 -->
+    <!-- 发布节点：arm_joint_publisher -->
     <node 
         name="arm_joint_publisher" 
         pkg="arm_control" 
@@ -14,7 +13,7 @@
         output="screen"
     />
 
-    <!-- 订阅节点：arm_state_subscriber，在新 xterm 中启动 -->
+    <!-- 订阅节点：arm_state_subscriber -->
     <node 
         name="arm_state_subscriber" 
         pkg="arm_control" 

@@ -16,7 +16,7 @@ else
     echo "[WARN] 关节指令话题无输出"
 fi
 
-# 3. 检测自定义状态话题（若添加了进阶方案）
+# 3. 检测自定义状态话题
 if rostopic echo /arm_pour_status -n 1 > /dev/null 2>&1; then
     STATUS=$(rostopic echo /arm_pour_status -n 1 | grep "data:" | awk -F'"' '{print $2}')
     echo "[OK] 节点状态：$STATUS"

@@ -9,7 +9,7 @@
 #include <ctime>
 #include <sstream>
 
-// 赛事参数宏定义（机械臂关节数、角度范围等）
+// 赛事参数宏定义（机械臂关节数、角度范围）
 #define ARM_JOINT_NUM    5
 #define ARM_ANGLE_MIN    0.0
 #define ARM_ANGLE_MAX    270.0
@@ -29,15 +29,12 @@ public:
     RestaurantArmPour(ros::NodeHandle& nh)
         : nh_(nh)
     {
-        // ---------- 复用项目1/2的通信逻辑 ----------
-        // 假设已有话题：
+
         //   /arm_controller/command  (std_msgs/Float64MultiArray) 发布关节角度
         //   /gripper_controller/command (std_msgs/Float64) 发布爪部角度
         joint_pub_ = nh_.advertise<std_msgs::Float64MultiArray>("/arm_controller/command", 1);
         gripper_pub_ = nh_.advertise<std_msgs::Float64>("/gripper_controller/command", 1);
 
-        // 若项目1/2提供的是函数库（例如RobotInterface类），则在此处实例化并保存指针
-        // robot_interface_ = new RobotInterface();   // 示例，需替换为实际构造函数
         status_pub_ = nh_.advertise<std_msgs::String>("/arm_pour_status", 1);
         current_status_ = "initialized";  // 初始状态
         publishStatus();  // 发布初始状态
@@ -51,10 +48,9 @@ public:
     ~RestaurantArmPour()
     {
         // 若使用了动态分配的接口对象，在此释放
-        // delete robot_interface_;
     }
 
-    // ---------- 核心动作序列（第2点） ----------
+    // 核心动作序列
     void executePourSequence()
     {
         ROS_INFO("===== Start Pour & Store Sequence =====");
@@ -62,20 +58,19 @@ public:
         // 步骤1：爪部闭合至90°（耗时1s）
         current_status_ = "step_1_gripper_close";  // 更新状态
         publishStatus();   
-        if (!setGripperAngle(90.0, 1.0, 1)) return;  // 1 为步骤编号，用于打印
+        if (!setGripperAngle(90.0, 1.0, 1)) return;  // 1 为步骤编号
 
         // 步骤2：机械臂抬升（耗时2s）
         current_status_ = "step_2_arm_lift";
         publishStatus();   
-        std::vector<double> arm_cmd2 = {0.0, 60.0, 90.0, 0.0, 0.0};  // joint1~5
+        std::vector<double> arm_cmd2 = {0.0, 60.0, 90.0, 0.0, 0.0}; 
         if (!setJointAngles(arm_cmd2, 2.0, 2)) return;
 
         // 步骤3：机械臂旋转至倾倒角度（耗时1s）
-        // 仅改变joint4=150°，其余保持当前值（从上一步继承）
         current_status_ = "step_3_arm_rotate";  
         publishStatus();       
         std::vector<double> arm_cmd3 = joint_angles_;   // 拷贝当前目标角度
-        arm_cmd3[3] = 150.0;   // joint4索引为3（0-based）
+        arm_cmd3[3] = 150.0;   // joint4索引为3
         if (!setJointAngles(arm_cmd3, 1.0, 3)) return;
 
         // 步骤4：爪部松开至0°（耗时0.5s）
@@ -86,13 +81,13 @@ public:
         // 步骤5：机械臂复位（耗时2s）
         current_status_ = "step_5_arm_reset";
         publishStatus();   
-        std::vector<double> arm_cmd5(ARM_JOINT_NUM, 0.0);  // 全0
+        std::vector<double> arm_cmd5(ARM_JOINT_NUM, 0.0);  
         if (!setJointAngles(arm_cmd5, 2.0, 5)) return;
 
         // 步骤6：爪部保持0°（无耗时要求，仅设置状态并打印）
         current_status_ = "step_6_gripper_idle";
         publishStatus();  
-        if (!setGripperAngle(0.0, 0.0, 6)) return;   // 持续时间为0，表示不等待
+        if (!setGripperAngle(0.0, 0.0, 6)) return;   // 持续时间为0，不等待
 
         current_status_ = "sequence_completed";
         publishStatus();
@@ -106,14 +101,10 @@ private:
     ros::Publisher gripper_pub_;
     ros::Publisher status_pub_;     
     std::string current_status_;    
-
-    // 若使用函数库接口，可注释掉上面的publisher，改用下面的指针
-    // RobotInterface* robot_interface_;
-
     std::vector<double> joint_angles_;   // 当前关节目标角度缓存
     double gripper_angle_;              // 当前爪部目标角度缓存
 
-    // 获取格式化时间戳（YYYY-MM-DD HH:MM:SS.ms）
+    // 格式化时间戳（YYYY-MM-DD HH:MM:SS.ms）
     std::string getTimestamp()
     {
         std::time_t now = std::time(nullptr);
@@ -131,7 +122,7 @@ private:
         return oss.str();
     }
 
-    // ---------- 关节角度范围校验（第4点） ----------
+    // 关节角度范围校验
     bool checkJointAngle(int joint_id, double angle)
     {
         if (angle < ARM_ANGLE_MIN || angle > ARM_ANGLE_MAX)
@@ -154,7 +145,7 @@ private:
         return true;
     }
 
-    // ---------- 复位逻辑（第4点） ----------
+    // 复位逻辑
     void resetRobot()
     {
         ROS_WARN("Resetting robot to initial position...");
@@ -173,32 +164,26 @@ private:
         ros::Duration(1.0).sleep(); // 给复位动作预留时间
     }
 
-    // ---------- 实际发送命令的底层函数（复用通信逻辑） ----------
+    // 发送命令的底层函数
     bool publishJointCommand(const std::vector<double>& angles)
     {
-        // 方式A：话题发布（本示例采用）
+        // 话题发布
         std_msgs::Float64MultiArray msg;
         msg.data = angles;
         joint_pub_.publish(msg);
-
-        // 方式B：若项目1/2提供函数库接口，则替换为：
-        // robot_interface_->setJointAngles(angles);
         return true;
     }
 
     bool publishGripperCommand(double angle)
     {
-        // 方式A：话题发布
         std_msgs::Float64 msg;
         msg.data = angle;
         gripper_pub_.publish(msg);
-
-        // 方式B：函数库接口
-        // robot_interface_->setGripperAngle(angle);
+\
         return true;
     }
 
-    // ---------- 带校验、状态更新、耗时等待及终端打印的关节设置函数 ----------
+    // 带校验、状态更新、耗时等待及终端打印的关节设置函数
     bool setJointAngles(const std::vector<double>& target_angles, double duration, int step_id)
     {
         // 1. 校验每个关节角度
@@ -217,10 +202,10 @@ private:
         // 3. 更新缓存
         joint_angles_ = target_angles;
 
-        // 4. 终端打印：统一格式[时间戳 | 步骤X | 状态] 动作说明+耗时+角度
+        // 4. 终端打印：统一格式
         printStepStatus(step_id, target_angles, duration);
 
-        // 5. 耗时等待（若duration>0）
+        // 5. 耗时等待
         if (duration > 0)
             ros::Duration(duration).sleep();
 
@@ -239,7 +224,7 @@ private:
         publishGripperCommand(target_angle);
         gripper_angle_ = target_angle;
 
-        // 终端打印：统一格式
+        // 终端打印
         printStepStatus(step_id, target_angle, duration);
 
         if (duration > 0)
@@ -248,7 +233,7 @@ private:
         return true;
     }
 
-    // ---------- 终端状态打印（统一格式） ----------
+    // 终端状态打印
     void printStepStatus(int step_id, const std::vector<double>& angles, double duration)
     {
         std::string timestamp = getTimestamp();
@@ -328,11 +313,10 @@ private:
                   << action_desc << "+" << time_cost << "+" << angle_info << std::endl;
     }
 
-    // ---------- 错误处理：打印错误、复位、终止序列（第4点） ----------
+    // 错误处理：打印错误、复位、终止序列
     void errorHandler(const std::string& err_msg, int step_id)
     {
         std::string timestamp = getTimestamp();
-        // 错误状态打印也遵循统一格式
         std::cout << "[" << timestamp << " | 步骤" << step_id << " | 失败] " 
                   << "执行出错：" << err_msg << "+0s+0°" << std::endl;
         
@@ -345,7 +329,7 @@ private:
     }
 };
 
-// ---------- 主函数 ----------
+//主函数
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "restaurant_arm_pour");
@@ -356,7 +340,7 @@ int main(int argc, char** argv)
     // 执行核心动作序列
     controller.executePourSequence();
 
-    // 保持节点运行，等待可能的后续指令（若需要）
+    // 保持节点运行，等待后续指令
     ros::spin();
 
     return 0;

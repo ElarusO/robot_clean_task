@@ -2,7 +2,7 @@
 """
 机械臂关节角度发布节点
 核心特性：
-1. 1Hz持续发布5个关节完整信息，永不中断
+1. 1Hz持续发布5个关节完整信息
 2. 初始角度：0°、30°、60°、90°、120°
 3. 独立线程处理用户输入，不阻塞发布流程
 """
@@ -17,14 +17,14 @@ class ArmJointPublisher:
         # 初始化ROS节点
         rospy.init_node('arm_joint_publisher', anonymous=True)
         
-        # 创建话题发布者（队列大小设为50，防止消息堆积）
+        # 创建话题发布者
         self.pub = rospy.Publisher('/arm_joint_angles', JointState, queue_size=50)
         
         # 初始化关节状态消息
         self.joint_state = JointState()
         self.joint_state.name = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5']  # 固定关节名称
         
-        # 初始角度（转弧度）：0°、30°、60°、90°、120°
+        # 初始角度（转弧度）
         self.joint_state.position = [
             self.deg_to_rad(0),
             self.deg_to_rad(30),
@@ -33,10 +33,10 @@ class ArmJointPublisher:
             self.deg_to_rad(120)
         ]
         
-        # 线程锁：保护关节角度数据（防止读写冲突）
+        # 线程锁(防止读写冲突）
         self.angle_lock = threading.Lock()
         
-        # 设置发布频率：严格1Hz
+        # 发布频率
         self.rate = rospy.Rate(1)
         
         # 标记节点是否运行
@@ -106,7 +106,7 @@ class ArmJointPublisher:
                 break
 
     def publish_loop(self):
-        """主线程：1Hz持续发布关节状态"""
+        """主线程1Hz持续发布关节状态"""
         # 启动用户输入处理线程
         input_thread = threading.Thread(target=self.update_angles_interactive)
         input_thread.daemon = True  # 守护线程：主程序退出时自动结束

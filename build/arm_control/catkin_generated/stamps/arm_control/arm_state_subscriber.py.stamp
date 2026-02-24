@@ -2,8 +2,6 @@
 """
 机械臂关节状态订阅节点
 赛事适配说明：实时监控5轴机械臂关节状态，计算角度差值
-项目：ROS节点通信与5轴机械臂关节基础控制
-作者：[你的名字]
 """
 
 import rospy
@@ -36,19 +34,19 @@ class ArmStateSubscriber:
     def joint_state_callback(self, msg):
         """
         关节状态回调函数
-        赛事要求：清晰打印每个关节的「名称+当前角度+与上一帧角度差值」
+
         """
         self.msg_count += 1
         
-        # 检查消息顺序（简单的丢包检测）
+        # 检查消息顺序（丢包检测）
         if hasattr(msg.header, 'seq') and self.last_seq != -1:
             if msg.header.seq != self.last_seq + 1:
                 rospy.logwarn(f"可能丢包！当前seq={msg.header.seq}, 期望={self.last_seq + 1}")
         if hasattr(msg.header, 'seq'):
             self.last_seq = msg.header.seq
         
-        # 清屏，使输出更整洁（可选）
-        print("\033[2J\033[H")  # 清屏并回到左上角
+        # 清屏
+        print("\033[2J\033[H")
         
         print("=" * 60)
         print(f"机械臂关节状态监控 (消息#{self.msg_count})")
@@ -89,7 +87,6 @@ class ArmStateSubscriber:
                 status = "反向运动"
             
             # 格式化输出（赛事要求格式）
-            # 示例：joint1：0°，差值：0°
             print(f"{joint_name:<10} {current_deg:>7.2f}°       {diff_deg:>+7.2f}°       {status:<10}")
         
         print("=" * 60)

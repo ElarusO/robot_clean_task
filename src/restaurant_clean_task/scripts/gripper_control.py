@@ -4,7 +4,6 @@
 import rospy
 from restaurant_clean_task.srv import GripperControl, GripperControlResponse
 
-# ==================== 服务器内部逻辑（与原始代码一致） ====================
 class GripperController:
     """机械爪控制逻辑封装：角度校验、防抖、状态保持"""
     def __init__(self, initial_angle=0.0):
@@ -32,7 +31,7 @@ class GripperController:
         return GripperControlResponse(result, self.current_angle, info)
 
 
-# ==================== 对外提供的函数接口 ====================
+# 函数接口
 
 def start_server(node_name="gripper_server"):
     """
@@ -84,7 +83,7 @@ def send_command(angle, timeout=None):
         rospy.logerr(f"服务调用失败: {e}")
         return None
     
-    """
+"""
 柔性爪部控制模块
 功能：通过gripper_tools发送角度指令到爪部服务端
 依赖：gripper_tools库，服务端需提前运行

@@ -16,7 +16,7 @@ import arm_control
 import gripper_control
 import error_handle
 
-# ========== 预设角度（自定义，符合0-270°范围）==========
+# 预设角度（0-270°）
 # 初始/归位角度
 HOME_ANGLES = [0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -32,10 +32,10 @@ LIFT_ANGLES = [30.0, 30.0, 60.0, 0.0, 0.0]
 # 清洁角度（模拟马桶内部清洁，增加关节4旋转）
 CLEAN_ANGLES = [30.0, 30.0, 60.0, 90.0, 0.0]
 
-# 放置位置角度（此处复用抓取角度）
+# 放置位置角度（复用抓取角度）
 PLACE_ANGLES = GRASP_ANGLES.copy()
 
-# ========== 工具函数 ==========
+# 工具函数 
 def reset_arm_and_gripper():
     """复位所有关节和爪部到初始状态"""
     print(">> 执行安全复位：所有关节归零，爪部松开")
@@ -56,7 +56,7 @@ def check_and_execute(angles, action_name, duration):
     arm_control.set_arm_angles(angles)
     rospy.sleep(duration)
 
-# ========== 子动作函数（可单独调用）==========
+# 子动作函数（可单独调用）==========
 def move_to_grasp():
     """子动作1：机械臂移动到抓取位置"""
     check_and_execute(GRASP_ANGLES, "机械臂到位（抓取位置）", 2.0)
@@ -67,7 +67,7 @@ def close_gripper():
     if not error_handle.execute_with_timeout(
             gripper_control.set_gripper_angle, (GRIPPER_CLOSE_ANGLE,), 1.0):
         print("  爪部夹紧超时，但继续执行")
-    rospy.sleep(1.0)   # 等待实际夹紧
+    rospy.sleep(1.0)   # 等待夹紧
 
 def lift():
     """子动作3：抬升机械臂"""
@@ -98,7 +98,7 @@ def move_to_home():
     """子动作8：机械臂归位到初始角度"""
     check_and_execute(HOME_ANGLES, "机械臂归位", 2.0)
 
-# ========== 完整动作序列 ==========
+# 动作序列
 def run_sequence():
     """执行完整抓取-清洁-放置流程，总耗时 ≤20s"""
     print("\n========== 卫浴清洁任务开始 ==========")
@@ -112,7 +112,7 @@ def run_sequence():
     move_to_home()         # 2s
     print("========== 卫浴清洁任务完成 ==========\n")
 
-# ========== 主节点入口 ==========
+# 主节点入口
 def main():
     rospy.init_node('bathroom_arm_action', anonymous=True)
     

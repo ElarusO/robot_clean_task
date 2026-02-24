@@ -2,11 +2,11 @@
 """
 机械臂关节控制整合模块
 赛事适配说明：适配5轴机械臂，每关节旋转范围0-270°
-项目：ROS节点通信与5轴机械臂关节基础控制
+
 功能包含：
 1. 关节角度发布节点（支持手动修改角度）
 2. 关节状态订阅节点（监控角度变化）
-3. 简易角度发布接口（Float64MultiArray格式）
+3. 角度发布接口（Float64MultiArray格式）
 """
 
 import rospy
@@ -15,7 +15,7 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
 import numpy as np
 
-# -------------------------- 全局发布者（简易接口用） --------------------------
+# 全局发布者
 _pub = None
 
 def _get_publisher():
@@ -46,7 +46,7 @@ def set_arm_angles(angles):
     pub.publish(msg)
     rospy.logdebug(f"发布关节角度(Float64MultiArray): {angles}")
 
-# -------------------------- JointState发布节点类 --------------------------
+
 class ArmJointPublisher:
     def __init__(self, node_name='arm_joint_publisher'):
         """
@@ -65,7 +65,7 @@ class ArmJointPublisher:
             self.deg_to_rad(120)
         ]
         self.previous_angles = self.joint_state.position.copy()
-        self.rate = rospy.Rate(1)   # 1Hz
+        self.rate = rospy.Rate(1)   
         rospy.loginfo("机械臂关节发布节点已启动，按Ctrl+C退出")
         rospy.loginfo("关节角度限制：0-270度")
 
@@ -137,7 +137,7 @@ class ArmJointPublisher:
                     pass
             self.rate.sleep()
 
-# -------------------------- 关节状态订阅节点类 --------------------------
+# 关节状态订阅节点类
 class ArmStateSubscriber:
     def __init__(self, node_name='arm_state_subscriber'):
         """
@@ -161,7 +161,7 @@ class ArmStateSubscriber:
         """关节状态回调函数"""
         self.msg_count += 1
         
-        # 检查消息序列号是否连续（检测丢包）
+        # 检测丢包
         if hasattr(msg.header, 'seq') and self.last_seq != -1:
             if msg.header.seq != self.last_seq + 1:
                 rospy.logwarn(f"可能丢包！当前seq={msg.header.seq}, 期望={self.last_seq + 1}")
@@ -169,7 +169,7 @@ class ArmStateSubscriber:
             self.last_seq = msg.header.seq
 
         # 清屏并打印状态
-        print("\033[2J\033[H")  # 清屏（兼容Linux/macOS）
+        print("\033[2J\033[H")  
         print("=" * 60)
         print(f"机械臂关节状态监控 (消息#{self.msg_count})")
         print(f"时间戳: {msg.header.stamp.to_sec():.3f}s")
@@ -216,7 +216,7 @@ class ArmStateSubscriber:
         """运行订阅节点（阻塞）"""
         rospy.spin()
 
-# -------------------------- 对外接口函数 --------------------------
+# 对外接口函数
 def start_publisher(node_name='arm_joint_publisher'):
     """
     启动JointState类型的关节角度发布节点（阻塞运行，直到节点关闭）
@@ -239,7 +239,7 @@ def start_subscriber(node_name='arm_state_subscriber'):
     except rospy.ROSInterruptException:
         rospy.loginfo("订阅节点已退出")
 
-# -------------------------- 主函数（测试用） --------------------------
+# 主函数
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='机械臂关节控制工具')

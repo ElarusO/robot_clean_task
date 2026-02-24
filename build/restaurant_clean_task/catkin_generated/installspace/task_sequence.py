@@ -43,7 +43,7 @@ def reset_arm_and_gripper():
     gripper_control.set_gripper_angle(0.0)
     rospy.sleep(2.0)  # 等待动作完成
 
-# ========== 阶段1：餐具清理及收纳（循环2次）==========
+# 阶段1：餐具清理及收纳（循环2次）
 def run_stage1():
     for i in range(2):
         print(f"\n=== 餐具清理 第{i+1}处 ===")
@@ -86,7 +86,7 @@ def run_stage1():
             print("步骤6超时，继续下一动作")
     return True
 
-# ========== 阶段2：餐余垃圾清扫（循环2次）==========
+# 阶段2：餐余垃圾清扫（循环2次）
 def run_stage2():
     for i in range(2):
         print(f"\n=== 餐余垃圾清扫 第{i+1}处 ===")
@@ -125,9 +125,9 @@ def run_stage2():
             print("步骤5超时，继续下一动作")
     return True
 
-# ========== 主流程 ==========
+# 主流程
 def main():
-    # #tiaoshi
+    # testing: 输出模块路径和属性，确认正确导入
     # print("gripper_control 模块路径:", gripper_control.__file__)
     # print("模块中的属性:", dir(gripper_control))
 

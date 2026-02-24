@@ -26,14 +26,14 @@ def execute_with_timeout(action_func, args, expected_duration, timeout=3.0):
     :param timeout: 超时阈值（秒）
     :return: bool True=在超时内完成，False=超时
     """
-    # 执行动作（发送指令）
+    # 执行动作
     action_func(*args)
     
-    # 等待预期时间，同时检测超时
+    # 等待预期时间，检测超时
     start = time.time()
     while time.time() - start < expected_duration:
         if time.time() - start >= timeout:
             print(f"超时: 动作执行超过{timeout}秒，跳过该动作。")
             return False
-        time.sleep(0.1)  # 短间隔检查
+        time.sleep(0.1)  # 间隔检查
     return True
